@@ -1,32 +1,54 @@
 import React, { useState } from 'react';
-import { login } from '../api/api';
+import { login } from '../api/api'; // Az API hívás a backendhez
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [formData, setFormData] = useState({ username: '', password: '' });
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const { data } = await login(formData);
-        localStorage.setItem('token', data.token);
-        alert('Bejelentkezés sikeres!');
+        try {
+            const { data } = await login(formData); // API hívás a backendhez
+            localStorage.setItem('token', data.token); // A token elmentése
+            navigate('/gallery'); // Sikeres bejelentkezés után irányítás a galériába
+        } catch (err) {
+            setError('Hibás felhasználónév vagy jelszó');
+            console.error(err);
+        }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input
-                type="text"
-                placeholder="Felhasználónév"
-                value={formData.username}
-                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-            />
-            <input
-                type="password"
-                placeholder="Jelszó"
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            />
-            <button type="submit">Bejelentkezés</button>
-        </form>
+        <div>
+            <h2>Bejelentkezés</h2>
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <label>Felhasználónév:</label>
+                    <input
+                        type="text"
+                        name="username"
+                        value={formData.username}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div>
+                    <label>Jelszó:</label>
+                    <input
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                    />
+                </div>
+                <button type="submit">Bejelentkezés</button>
+            </form>
+            {error && <p>{error}</p>}
+        </div>
     );
 };
 

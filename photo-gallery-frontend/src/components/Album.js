@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { fetchAlbums } from '../api/api';
+import { fetchAlbums } from '../api/api'; // Ellenőrizd, hogy ez helyes
 
 const Album = () => {
     const [albums, setAlbums] = useState([]);
 
     useEffect(() => {
         const getAlbums = async () => {
-            const { data } = await fetchAlbums();
-            setAlbums(data);
+            try {
+                const { data } = await fetchAlbums();
+                setAlbums(data);
+            } catch (err) {
+                console.error('Nem sikerült betölteni az albumokat:', err);
+            }
         };
+
         getAlbums();
     }, []);
 
@@ -16,10 +21,7 @@ const Album = () => {
         <div>
             {albums.map((album) => (
                 <div key={album._id}>
-                    <h2>Album by {album.author}</h2>
-                    {album.images.map((image) => (
-                        <img key={image} src={image.src} alt="Album item" />
-                    ))}
+                    <h2>Album: {album.name}</h2>
                 </div>
             ))}
         </div>
