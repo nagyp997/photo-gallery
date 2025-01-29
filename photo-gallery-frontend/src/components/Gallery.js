@@ -1,43 +1,103 @@
 import React, { useState, useEffect } from 'react';
-import { fetchImages } from '../api/api';
+import { fetchImages, uploadImage, updateImage, deleteImage } from '../api/api';
 
 const Gallery = () => {
     const [images, setImages] = useState([]);
     const [error, setError] = useState(null);
+    const [newImage, setNewImage] = useState('');
+    const [editImage, setEditImage] = useState({ id: null, src: '' });
 
     useEffect(() => {
-        const getImages = async () => {
-            try {
-                const { data } = await fetchImages(); // Lekéri az adatokat a szerverről
-                setImages(data); // Beállítja az állapotot a kapott képek alapján
-            } catch (err) {
-                setError('Nem sikerült betölteni a képeket.');
-                console.error('Hiba történt:', err);
-            }
-        };
-
         getImages();
     }, []);
 
+    const getImages = async () => {
+        try {
+            const { data } = await fetchImages();
+            setImages(data);
+        } catch (err) {
+            setError('Nem sikerült betölteni a képeket.');
+            console.error('Hiba történt:', err);
+        }
+    };
+
+    const handleUpload = async () => {
+        if (!newImage) return alert('Adj meg egy kép URL-t vagy fájlnevet!');
+        try {
+            await uploadImage({ src: newImage });
+            setNewImage('');
+            getImages();
+        } catch (err) {
+            console.error('Hiba történt a kép feltöltésekor:', err);
+        }
+    };
+
+    const handleEdit = async (id) => {
+        if (!editImage.src) return alert('Adj meg egy új kép URL-t!');
+        try {
+            await updateImage(id, { src: editImage.src });
+            setEditImage({ id: null, src: '' });
+            getImages();
+        } catch (err) {
+            console.error('Hiba történt a kép módosításakor:', err);
+        }
+    };
+
+    const handleDelete = async (id) => {
+        try {
+            await deleteImage(id);
+            getImages();
+        } catch (err) {
+            console.error('Hiba történt a kép törlésekor:', err);
+        }
+    };
+
     return (
         <div>
+            <h1>Galéria</h1>
+
+            {/*Új kép feltöltése */}
+            <div>
+                <input
+                    type="text"
+                    placeholder="Kép URL vagy fájlnév"
+                    value={newImage}
+                    onChange={(e) => setNewImage(e.target.value)}
+                />
+                <button onClick={handleUpload}>Feltöltés</button>
+            </div>
+
             {error && <p>{error}</p>}
+
+            {/*Képek megjelenítése */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                 {images.map((image) => (
-                    <div key={image._id}>
+                    <div key={image._id} style={{ border: '1px solid black', padding: '10px' }}>
                         <img
-                            src={`http://localhost:5000/uploads/${image.src}`} // A `src` alapján jeleníti meg a képet
+                            src={image.src.startsWith('http') ? image.src : `http://localhost:5000/uploads/${image.src}`}
                             alt="Gallery item"
                             style={{ width: '200px', height: '200px', objectFit: 'cover' }}
                         />
                         <p>Author: {image.author}</p>
-                        <ul>
-                            {image.comments.map((comment) => (
-                                <li key={comment._id}>
-                                    {comment.comment} - {new Date(comment.createdAt).toLocaleDateString()}
-                                </li>
-                            ))}
-                        </ul>
+
+                        {/*Kép módosítása */}
+                        {editImage.id === image._id ? (
+                            <div>
+                                <input
+                                    type="text"
+                                    value={editImage.src}
+                                    onChange={(e) => setEditImage({ ...editImage, src: e.target.value })}
+                                />
+                                <button onClick={() => handleEdit(image._id)}>Mentés</button>
+                            </div>
+                        ) : (
+                            <button onClick={() => setEditImage({ id: image._id, src: image.src })}>
+                                Módosítás
+                            </button>
+                        )}
+
+                        {/*Kép törlése */}
+                        <button onClick={() => handleDelete(image._id)}>Törlés</button>
                     </div>
                 ))}
             </div>
