@@ -7,10 +7,6 @@ const Gallery = () => {
     const [newImage, setNewImage] = useState('');
     const [editImage, setEditImage] = useState({ id: null, src: '' });
 
-    useEffect(() => {
-        getImages();
-    }, []);
-
     const getImages = async () => {
         try {
             const { data } = await fetchImages();
@@ -21,8 +17,13 @@ const Gallery = () => {
         }
     };
 
+
+    useEffect(() => {
+        getImages();
+    }, []);
+
     const handleUpload = async () => {
-        if (!newImage) return alert('Adj meg egy kép URL-t vagy fájlnevet!');
+        if (!newImage) return alert('Adj meg egy kép URL-t vagy fájlnévet!');
         try {
             await uploadImage({ src: newImage });
             setNewImage('');
@@ -56,7 +57,6 @@ const Gallery = () => {
         <div>
             <h1>Galéria</h1>
 
-            {/*Új kép feltöltése */}
             <div>
                 <input
                     type="text"
@@ -69,7 +69,6 @@ const Gallery = () => {
 
             {error && <p>{error}</p>}
 
-            {/*Képek megjelenítése */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                 {images.map((image) => (
                     <div key={image._id} style={{ border: '1px solid black', padding: '10px' }}>
@@ -78,9 +77,8 @@ const Gallery = () => {
                             alt="Gallery item"
                             style={{ width: '200px', height: '200px', objectFit: 'cover' }}
                         />
-                        <p>Author: {image.author}</p>
+                        <p>Szerző: {image.author?.username || 'Ismeretlen'}</p>
 
-                        {/*Kép módosítása */}
                         {editImage.id === image._id ? (
                             <div>
                                 <input
@@ -96,7 +94,6 @@ const Gallery = () => {
                             </button>
                         )}
 
-                        {/*Kép törlése */}
                         <button onClick={() => handleDelete(image._id)}>Törlés</button>
                     </div>
                 ))}

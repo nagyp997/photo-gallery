@@ -9,7 +9,7 @@ const axios = require('axios');
 // Get all images
 router.get('/', auth, async (req, res) => {
     try {
-        const images = await Image.find();
+        const images = await Image.find().populate('author', 'username');
         res.json(images);
     } catch (err) {
         res.status(500).json({ error: err.message });
