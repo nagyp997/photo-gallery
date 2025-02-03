@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { fetchImages, uploadImage, updateImage, deleteImage } from '../api/api';
+import { fetchImages, uploadImage, updateImage, deleteImage, addComment, deleteComment } from '../api/api';
 import {
-    Grid, Card, CardMedia, CardContent, CardActions, Button, TextField, Typography, CircularProgress, Box, Alert
+    Grid, Card, CardMedia, CardContent, CardActions, Button, TextField, Typography, CircularProgress, Box, Alert, List, ListItem, IconButton
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const Gallery = () => {
     const [images, setImages] = useState([]);
     const [error, setError] = useState(null);
     const [newImage, setNewImage] = useState('');
     const [editImage, setEditImage] = useState({ id: null, src: '' });
-    const [loading, setLoading] = useState(true);
+    const [commentText, setCommentText] = useState({});
     const [alertMessage, setAlertMessage] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const loggedInUserId = localStorage.getItem('userId');
 
@@ -71,6 +73,35 @@ const Gallery = () => {
         }
     };
 
+    const handleCommentSubmit = async (imageId) => {
+        if (!commentText[imageId]) return;
+
+        try {
+            console.log(`💬 Komment küldése képhez (ID: ${imageId}):`, commentText[imageId]); // Log a konzolba
+
+            await addComment(imageId, commentText[imageId]);
+            setCommentText({ ...commentText, [imageId]: '' }); // Töröljük az input mezőt
+
+            getImages(); // Frissítjük a képeket, hogy megjelenjen a komment
+        } catch (err) {
+            console.error('❌ Hiba történt a komment küldésekor:', err);
+        }
+    };
+
+    const handleDeleteComment = async (imageId, commentId, authorId) => {
+        if (loggedInUserId !== authorId) {
+            setAlertMessage({ type: 'error', text: '❌ Nincs jogosultságod törölni ezt a kommentet!' });
+            return;
+        }
+
+        try {
+            await deleteComment(imageId, commentId);
+            getImages();
+        } catch (err) {
+            console.error('Hiba történt a komment törlésekor:', err);
+        }
+    };
+
     return (
         <Box p={3}>
             <Typography variant="h4" align="center" gutterBottom>Galéria</Typography>
@@ -116,7 +147,48 @@ const Gallery = () => {
                             />
                             <CardContent>
                                 <Typography variant="subtitle1">Szerző: {image.author.username}</Typography>
+
+                                {/* Kommentek megjelenítése */}
+                                <List>
+                                    {image.comments && image.comments.length > 0 ? (
+                                        image.comments.map((comment) => (
+                                            <ListItem key={comment._id}>
+                                                {comment.comment} - <strong>{comment.author?.username || "Ismeretlen"}</strong>
+                                                {loggedInUserId === comment.author?._id && (
+                                                    <IconButton
+                                                        size="small"
+                                                        color="error"
+                                                        onClick={() => handleDeleteComment(image._id, comment._id, comment.author._id)}
+                                                    >
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                )}
+                                            </ListItem>
+                                        ))
+                                    ) : (
+                                        <Typography variant="body2" color="textSecondary">Nincsenek hozzászólások</Typography>
+                                    )}
+                                </List>
+
+                                {/* Komment beküldése */}
+                                <TextField
+                                    size="small"
+                                    fullWidth
+                                    label="Hozzászólás"
+                                    value={commentText[image._id] || ''}
+                                    onChange={(e) => setCommentText({ ...commentText, [image._id]: e.target.value })}
+                                />
+                                <Button
+                                    variant="contained"
+                                    size="small"
+                                    color="primary"
+                                    onClick={() => handleCommentSubmit(image._id)}
+                                >
+                                    Küldés
+                                </Button>
                             </CardContent>
+
+                            {/* Kép szerkesztése és törlése */}
                             <CardActions>
                                 {editImage.id === image._id ? (
                                     <Box display="flex" width="100%">

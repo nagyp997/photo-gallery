@@ -8,7 +8,7 @@ const fs = require('fs');
 // Get all images
 router.get('/', auth, async (req, res) => {
     try {
-        const images = await Image.find().populate('author', 'username');
+        const images = await Image.find().populate('author', 'username').populate('comments.author', 'username');
         res.json(images);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -93,6 +93,60 @@ router.delete('/:id/delete', auth, async (req, res) => {
         res.json({ msg: 'A kép sikeresen törölve' });
     } catch (err) {
         console.error('Hiba a kép törlése során:', err.message);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Új komment hozzáadása egy képhez
+router.post('/:id/comment', auth, async (req, res) => {
+    try {
+        const { comment } = req.body;
+        const image = await Image.findById(req.params.id);
+        if (!image) return res.status(404).json({ msg: 'A kép nem található' });
+
+        console.log(`💾 Komment mentése az adatbázisba: "${comment}" Felhasználó: ${req.user.id}`);
+
+        const newComment = {
+            author: req.user.id,
+            comment,
+            createdAt: new Date()
+        };
+
+        image.comments.push(newComment);
+        await image.save();
+
+        res.json({ msg: 'Komment hozzáadva', comment: newComment });
+    } catch (err) {
+        console.error('❌ Hiba a komment mentése során:', err.message);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
+// Komment törlése
+router.delete('/:imageId/comment/:commentId', auth, async (req, res) => {
+    try {
+        const image = await Image.findById(req.params.imageId);
+        if (!image) return res.status(404).json({ msg: 'A kép nem található' });
+
+        // Keressük meg a kommentet
+        const commentIndex = image.comments.findIndex(c => c._id.toString() === req.params.commentId);
+        if (commentIndex === -1) {
+            return res.status(404).json({ msg: 'A komment nem található' });
+        }
+
+        // Ellenőrizzük, hogy a bejelentkezett felhasználó törölheti-e
+        if (image.comments[commentIndex].author.toString() !== req.user.id) {
+            return res.status(403).json({ msg: '❌ Nincs jogosultságod törölni ezt a kommentet!' });
+        }
+
+        // Komment törlése a tömbből
+        image.comments.splice(commentIndex, 1);
+        await image.save();
+
+        res.json({ msg: 'Komment törölve', image });
+    } catch (err) {
+        console.error('❌ Hiba a komment törlése során:', err.message);
         res.status(500).json({ error: err.message });
     }
 });

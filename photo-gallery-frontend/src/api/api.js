@@ -10,6 +10,8 @@ API.interceptors.request.use((req) => {
     return req;
 });
 
+export const addComment = (imageId, comment) => API.post(`/images/${imageId}/comment`, { comment });
+export const deleteComment = (imageId, commentId) => API.delete(`/images/${imageId}/comment/${commentId}`);
 export const fetchImages = () => API.get('/images');
 export const uploadImage = (imageData) => API.post('/images/new', imageData);
 export const updateImage = (id, updatedData) => API.put(`/images/${id}/edit`, updatedData);
