@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchAlbums } from '../api/api'; // Ellenőrizd, hogy ez helyes
+import { fetchAlbums } from '../api/api';
 
 const Album = () => {
     const [albums, setAlbums] = useState([]);

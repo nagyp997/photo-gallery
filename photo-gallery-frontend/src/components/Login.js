@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { login } from '../api/api'; // Az API hívás a backendhez
 import { useNavigate } from 'react-router-dom';
+import { login } from '../api/api';
+import { Container, TextField, Button, Typography, Box, Paper } from '@mui/material';
 
 const Login = () => {
     const [formData, setFormData] = useState({ username: '', password: '' });
@@ -14,41 +15,48 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const { data } = await login(formData); // API hívás a backendhez
-            localStorage.setItem('token', data.token); // A token elmentése
-            navigate('/gallery'); // Sikeres bejelentkezés után irányítás a galériába
+            const { data } = await login(formData);
+            localStorage.setItem('token', data.token);
+            navigate('/gallery');
         } catch (err) {
-            setError('Hibás felhasználónév vagy jelszó');
+            setError('❌ Hibás felhasználónév vagy jelszó!');
             console.error(err);
         }
     };
 
     return (
-        <div>
-            <h2>Bejelentkezés</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Felhasználónév:</label>
-                    <input
-                        type="text"
-                        name="username"
-                        value={formData.username}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <label>Jelszó:</label>
-                    <input
-                        type="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                    />
-                </div>
-                <button type="submit">Bejelentkezés</button>
-            </form>
-            {error && <p>{error}</p>}
-        </div>
+        <Container maxWidth="sm">
+            <Paper elevation={3} style={{ padding: '20px', marginTop: '50px', textAlign: 'center' }}>
+                <Typography variant="h4" gutterBottom>Bejelentkezés</Typography>
+                <form onSubmit={handleSubmit}>
+                    <Box mb={2}>
+                        <TextField
+                            fullWidth
+                            label="Felhasználónév"
+                            name="username"
+                            value={formData.username}
+                            onChange={handleChange}
+                            variant="outlined"
+                        />
+                    </Box>
+                    <Box mb={2}>
+                        <TextField
+                            fullWidth
+                            type="password"
+                            label="Jelszó"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            variant="outlined"
+                        />
+                    </Box>
+                    {error && <Typography color="error">{error}</Typography>}
+                    <Button type="submit" variant="contained" color="primary" fullWidth>
+                        Bejelentkezés
+                    </Button>
+                </form>
+            </Paper>
+        </Container>
     );
 };
 

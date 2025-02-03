@@ -4,7 +4,6 @@ const auth = require('../middleware/authMiddleware');
 const router = express.Router();
 const path = require('path');
 const fs = require('fs');
-const axios = require('axios');
 
 // Get all images
 router.get('/', auth, async (req, res) => {
@@ -19,8 +18,10 @@ router.get('/', auth, async (req, res) => {
 //Search by ID
 router.get('/:id', auth, async (req, res) => {
     try {
-        const image = await Image.findById(req.params.id);
-        if (!image) return res.status(404).json({ msg: 'A kép nem található' });
+        const image = await Image.findById(req.params.id).populate('author', 'username');
+        if (!image) {
+            return res.status(404).json({ msg: 'A kép nem található' });
+        }
         res.json(image);
     } catch (err) {
         res.status(500).json({ error: err.message });
