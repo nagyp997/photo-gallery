@@ -40,7 +40,11 @@ const Gallery = () => {
             setEditImage({ id: null, src: '' });
             getImages();
         } catch (err) {
-            console.error('Hiba történt a kép módosításakor:', err);
+            if (err.response && err.response.status === 403) {
+                alert('Nincs jogosultságod módosítani ezt a képet!');
+            } else {
+                console.error('Hiba történt a kép módosításakor:', err);
+            }
         }
     };
 

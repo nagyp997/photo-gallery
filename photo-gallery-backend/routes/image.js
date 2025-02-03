@@ -58,19 +58,20 @@ router.post('/new', auth, async (req, res) => {
 //Modify image data
 router.put('/:id/edit', auth, async (req, res) => {
     try {
-        const { src } = req.body;
-        let image = await Image.findById(req.params.id);
-        if (!image) return res.status(404).json({ msg: 'A kép nem található' });
-
-        // Ellenőrizzük, hogy a felhasználó azonos-e a kép szerzőjével
-        if (image.author.toString() !== req.user.id) {
-            return res.status(403).json({ msg: 'Nincs jogosultságod szerkeszteni ezt a képet' });
+        const image = await Image.findById(req.params.id);
+        if (!image) {
+            return res.status(404).json({ msg: 'A kép nem található' });
         }
 
-        image.src = src || image.src;
+        if (image.author.toString() !== req.user.id) {
+            return res.status(403).json({ msg: 'Nincs jogosultságod módosítani ezt a képet' });
+        }
+
+        image.src = req.body.src || image.src;
         await image.save();
-        res.json(image);
+        res.json({ msg: 'A kép sikeresen frissítve', image });
     } catch (err) {
+        console.error('Hiba történt a kép módosítása során:', err.message);
         res.status(500).json({ error: err.message });
     }
 });
