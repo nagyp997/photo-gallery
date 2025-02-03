@@ -55,6 +55,9 @@ const Login = () => {
                         Bejelentkezés
                     </Button>
                 </form>
+                <Button onClick={() => navigate('/register')} color="secondary">
+                    Nincs még fiókod? Regisztrálj itt!
+                </Button>
             </Paper>
         </Container>
     );
