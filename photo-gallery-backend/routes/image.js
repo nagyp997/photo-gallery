@@ -79,24 +79,19 @@ router.put('/:id/edit', auth, async (req, res) => {
 
 router.delete('/:id/delete', auth, async (req, res) => {
     try {
-        console.log('Törlési kérés érkezett:', req.params.id);
-
         const image = await Image.findById(req.params.id);
         if (!image) {
-            console.log('A kép nem található az adatbázisban.');
             return res.status(404).json({ msg: 'A kép nem található' });
         }
 
         if (image.author.toString() !== req.user.id) {
-            console.log('Nincs jogosultság a kép törléséhez.');
             return res.status(403).json({ msg: 'Nincs jogosultságod törölni ezt a képet' });
         }
 
         await Image.findByIdAndDelete(req.params.id);
-        console.log('A kép sikeresen törölve:', req.params.id);
         res.json({ msg: 'A kép sikeresen törölve' });
     } catch (err) {
-        console.error('Hiba a törlés során:', err.message);
+        console.error('Hiba a kép törlése során:', err.message);
         res.status(500).json({ error: err.message });
     }
 });

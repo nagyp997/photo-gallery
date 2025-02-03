@@ -53,7 +53,11 @@ const Gallery = () => {
             await deleteImage(id);
             getImages();
         } catch (err) {
-            console.error('Hiba történt a kép törlésekor:', err);
+            if (err.response && err.response.status === 403) {
+                alert('Nincs jogosultságod törölni ezt a képet!');
+            } else {
+                console.error('Hiba történt a kép törlésekor:', err);
+            }
         }
     };
 
