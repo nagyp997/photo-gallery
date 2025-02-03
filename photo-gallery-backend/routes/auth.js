@@ -28,32 +28,18 @@ router.post('/register', async (req, res) => {
 // Bejelentkezés végpont
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
-
     try {
-        // Felhasználó keresése az adatbázisban
         const user = await User.findOne({ username });
-        if (!user) {
-            return res.status(401).json({ msg: 'Hibás felhasználónév vagy jelszó' });
-        }
+        if (!user) return res.status(400).json({ msg: 'Felhasználó nem található' });
 
-        // Jelszó ellenőrzése
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(401).json({ msg: 'Hibás felhasználónév vagy jelszó' });
-        }
+        if (!isMatch) return res.status(400).json({ msg: 'Hibás jelszó' });
 
-        // Token generálása
-        const token = jwt.sign(
-            { id: user._id },
-            process.env.JWT_SECRET,
-            { expiresIn: '1h' }
-        );
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        // Token visszaküldése
-        res.status(200).json({ token });
+        res.json({ token, user: { _id: user._id, username: user.username } });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ msg: 'Szerverhiba' });
+        res.status(500).json({ error: err.message });
     }
 });
 

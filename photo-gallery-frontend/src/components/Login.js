@@ -16,13 +16,16 @@ const Login = () => {
         e.preventDefault();
         try {
             const { data } = await login(formData);
+            console.log('Bejelentkezési válasz:', data);
             localStorage.setItem('token', data.token);
+            localStorage.setItem('userId', data.user._id); // Felhasználó ID elmentése
             navigate('/gallery');
         } catch (err) {
-            setError('❌ Hibás felhasználónév vagy jelszó!');
-            console.error(err);
+            setError('Hibás felhasználónév vagy jelszó!');
+            console.error('Bejelentkezési hiba:', err);
         }
     };
+
 
     return (
         <Container maxWidth="sm">
