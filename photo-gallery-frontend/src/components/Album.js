@@ -7,6 +7,7 @@ const Albums = () => {
     const [newAlbum, setNewAlbum] = useState('');
     const [editAlbum, setEditAlbum] = useState({ id: null, name: '' });
     const [selectedImages, setSelectedImages] = useState([]);
+    const loggedInUserId = localStorage.getItem('userId'); // Bejelentkezett felhasználó ID-ja
 
     useEffect(() => {
         getAlbums();
@@ -43,12 +44,17 @@ const Albums = () => {
         }
     };
 
-    const handleDelete = async (id) => {
+    const handleDelete = async (id, authorId) => {
+        if (loggedInUserId !== authorId) {
+            alert('Nincs jogosultságod törölni ezt az albumot!');
+            return;
+        }
+
         try {
             await deleteAlbum(id);
-            getAlbums();
+            getAlbums(); // Frissítjük az albumok listáját
         } catch (err) {
-            console.error('Hiba az album törlésekor:', err);
+            console.error('Hiba történt az album törlésekor:', err);
         }
     };
 
@@ -93,7 +99,6 @@ const Albums = () => {
                                     <Typography variant="body2" color="textSecondary">
                                         Szerző: {album.author && album.author.username ? album.author.username : "Ismeretlen"}
                                     </Typography>
-                                    {/*Gomb az albumhoz tartozó képek lekérdezéséhez */}
                                     <Button
                                         variant="contained"
                                         color="primary"
@@ -103,13 +108,19 @@ const Albums = () => {
                                         Képek megtekintése
                                     </Button>
                                 </CardContent>
+                                {/*Csak a saját album törlésére legyen lehetőség */}
+                                {album.author?._id === loggedInUserId && (
+                                    <Button size="small" color="error" onClick={() => handleDelete(album._id, album.author._id)}>
+                                        Törlés
+                                    </Button>
+                                )}
                             </Card>
                         </Grid>
                     ))
                 )}
             </Grid>
 
-            {/*Az albumhoz tartozó képek megjelenítése */}
+            {/* Az albumhoz tartozó képek megjelenítése */}
             {selectedImages.length > 0 && (
                 <Box mt={4}>
                     <Typography variant="h5">Album képei</Typography>
@@ -124,7 +135,9 @@ const Albums = () => {
                                         alt="Kép"
                                     />
                                     <CardContent>
-                                        <Typography variant="subtitle1">Szerző: {image.author.username}</Typography>
+                                        <Typography variant="subtitle1">
+                                            Szerző: {image.author && image.author.username ? image.author.username : "Ismeretlen"}
+                                        </Typography>
                                     </CardContent>
                                 </Card>
                             </Grid>

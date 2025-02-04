@@ -1,5 +1,6 @@
 const express = require('express');
 const Album = require('../models/Album');
+const Image = require('../models/Image');
 const auth = require('../middleware/authMiddleware');
 const router = express.Router();
 
@@ -66,11 +67,27 @@ router.delete('/:id/delete', auth, async (req, res) => {
             return res.status(404).json({ msg: 'Az album nem található' });
         }
 
-        await album.deleteOne(); // Az album törlése
+        if (album.author.toString() !== req.user.id) {
+            return res.status(403).json({ msg: 'Nincs jogosultságod törölni ezt az albumot' });
+        }
 
+        await Album.findByIdAndDelete(req.params.id);
         res.json({ msg: 'Az album sikeresen törölve' });
     } catch (err) {
-        console.error('Hiba az album törlése során:', err.message);
+        console.error('Hiba az album törlésekor:', err.message);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.get('/:id/images', auth, async (req, res) => {
+    try {
+        const albumImages = await Image.find({ album: req.params.id }).populate('author', 'username');
+        if (!albumImages.length) {
+            return res.status(404).json({ msg: 'Nincsenek képek ebben az albumban' });
+        }
+        res.json(albumImages);
+    } catch (err) {
+        console.error('Hiba az album képeinek betöltésekor:', err.message);
         res.status(500).json({ error: err.message });
     }
 });
