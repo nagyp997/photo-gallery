@@ -1,0 +1,15 @@
+node_modules/
+.idea/
+.env
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+photo-gallery-frontend/build/
+photo-gallery-backend/dist/
+*.tmp
+*.swp
+*.DS_Store
+photo-gallery-backend/uploads/
+.git/
+coverage/
