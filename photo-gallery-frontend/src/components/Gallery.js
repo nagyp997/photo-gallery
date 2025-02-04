@@ -172,6 +172,7 @@ const Gallery = () => {
                                         padding: '5px',
                                         borderRadius: '4px',
                                         backgroundColor: '#f9f9f9',
+                                        mb: 2
                                     }}
                                 >
                                     {image.comments.length > 0 ? (
@@ -205,12 +206,21 @@ const Gallery = () => {
                                     label="Hozzászólás"
                                     value={commentText[image._id] || ''}
                                     onChange={(e) => setCommentText({ ...commentText, [image._id]: e.target.value })}
+                                    variant="outlined"
+                                    size="small"
+                                    fullWidth
+                                    sx={{
+                                        mb: 1
+                                    }}
                                 />
                                 <Button
                                     variant="contained"
                                     size="small"
                                     color="primary"
                                     onClick={() => handleCommentSubmit(image._id)}
+                                    sx={{
+                                        mt: 1
+                                    }}
                                 >
                                     Küldés
                                 </Button>
