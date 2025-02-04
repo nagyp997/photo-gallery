@@ -17,5 +17,8 @@ export const uploadImage = (imageData) => API.post('/images/new', imageData);
 export const updateImage = (id, updatedData) => API.put(`/images/${id}/edit`, updatedData);
 export const deleteImage = (id) => API.delete(`/images/${id}/delete`);
 export const fetchAlbums = () => API.get('/albums');
+export const createAlbum = (albumData) => API.post('/albums/new', albumData);
+export const updateAlbum = (id, albumData) => API.put(`/albums/${id}/edit`, albumData);
+export const deleteAlbum = (id) => API.delete(`/albums/${id}/delete`);
 export const login = (formData) => API.post('/auth/login', formData);
 export const register = (formData) => API.post('/auth/register', formData);
