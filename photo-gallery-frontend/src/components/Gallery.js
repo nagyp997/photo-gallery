@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchImages, uploadImage, updateImage, deleteImage, addComment, deleteComment } from '../api/api';
 import {
-    Grid, Card, CardMedia, CardContent, CardActions, Button, TextField, Typography, CircularProgress, Box, Alert, List, ListItem, IconButton
+    Grid, Card, CardMedia, CardContent, CardActions, Button, TextField, Typography, CircularProgress, Box, Alert, List, ListItem, IconButton, Dialog, DialogContent, DialogActions
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -13,6 +13,8 @@ const Gallery = () => {
     const [commentText, setCommentText] = useState({});
     const [alertMessage, setAlertMessage] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [selectedImage, setSelectedImage] = useState(null); // A kiválasztott kép
+    const [isModalOpen, setIsModalOpen] = useState(false);    // A modális állapota
 
     const loggedInUserId = localStorage.getItem('userId');
 
@@ -45,7 +47,7 @@ const Gallery = () => {
 
     const handleEdit = async (id, authorId) => {
         if (loggedInUserId !== authorId) {
-            setAlertMessage({ type: 'error', text: '❌ Nincs jogosultságod módosítani ezt a képet!' });
+            setAlertMessage({ type: 'error', text: 'Nincs jogosultságod módosítani ezt a képet!' });
             return;
         }
 
@@ -61,7 +63,7 @@ const Gallery = () => {
 
     const handleDelete = async (id, authorId) => {
         if (loggedInUserId !== authorId) {
-            setAlertMessage({ type: 'error', text: '❌ Nincs jogosultságod törölni ezt a képet!' });
+            setAlertMessage({ type: 'error', text: 'Nincs jogosultságod törölni ezt a képet!' });
             return;
         }
 
@@ -84,13 +86,13 @@ const Gallery = () => {
 
             getImages(); // Frissítjük a képeket, hogy megjelenjen a komment
         } catch (err) {
-            console.error('❌ Hiba történt a komment küldésekor:', err);
+            console.error('Hiba történt a komment küldésekor:', err);
         }
     };
 
     const handleDeleteComment = async (imageId, commentId, authorId) => {
         if (loggedInUserId !== authorId) {
-            setAlertMessage({ type: 'error', text: '❌ Nincs jogosultságod törölni ezt a kommentet!' });
+            setAlertMessage({ type: 'error', text: 'Nincs jogosultságod törölni ezt a kommentet!' });
             return;
         }
 
@@ -100,6 +102,16 @@ const Gallery = () => {
         } catch (err) {
             console.error('Hiba történt a komment törlésekor:', err);
         }
+    };
+
+    const handleImageClick = (image) => {
+        setSelectedImage(image);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedImage(null);
     };
 
     return (
@@ -144,29 +156,45 @@ const Gallery = () => {
                                 height="200"
                                 image={image.src.startsWith('http') ? image.src : `http://localhost:5000/uploads/${image.src}`}
                                 alt="Kép"
+                                onClick={() => handleImageClick(image)}
+                                sx={{ cursor: 'pointer' }}
                             />
                             <CardContent>
                                 <Typography variant="subtitle1">Szerző: {image.author.username}</Typography>
 
                                 {/* Kommentek megjelenítése */}
-                                <List>
-                                    {image.comments && image.comments.length > 0 ? (
+                                <List
+                                    sx={{
+                                        maxHeight: '150px',
+                                        minHeight: '150px',
+                                        overflowY: 'auto',
+                                        border: '1px solid #ddd',
+                                        padding: '5px',
+                                        borderRadius: '4px',
+                                        backgroundColor: '#f9f9f9',
+                                    }}
+                                >
+                                    {image.comments.length > 0 ? (
                                         image.comments.map((comment) => (
-                                            <ListItem key={comment._id}>
-                                                {comment.comment} - <strong>{comment.author?.username || "Ismeretlen"}</strong>
+                                            <ListItem key={comment._id} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                <Typography variant="body2">
+                                                    {comment.comment} - <strong>{comment.author?.username || "Ismeretlen"}</strong>
+                                                </Typography>
                                                 {loggedInUserId === comment.author?._id && (
                                                     <IconButton
                                                         size="small"
                                                         color="error"
                                                         onClick={() => handleDeleteComment(image._id, comment._id, comment.author._id)}
                                                     >
-                                                        <DeleteIcon />
+                                                        <DeleteIcon fontSize="small" />
                                                     </IconButton>
                                                 )}
                                             </ListItem>
                                         ))
                                     ) : (
-                                        <Typography variant="body2" color="textSecondary">Nincsenek hozzászólások</Typography>
+                                        <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center' }}>
+                                            Nincsenek hozzászólások
+                                        </Typography>
                                     )}
                                 </List>
 
@@ -215,6 +243,20 @@ const Gallery = () => {
                     </Grid>
                 ))}
             </Grid>
+            <Dialog open={isModalOpen} onClose={handleCloseModal} maxWidth="md" fullWidth>
+                <DialogContent>
+                    {selectedImage && (
+                        <img
+                            src={selectedImage.src.startsWith('http') ? selectedImage.src : `http://localhost:5000/uploads/${selectedImage.src}`}
+                            alt="Kép nagyban"
+                            style={{ width: '100%', height: 'auto', borderRadius: '4px' }}
+                        />
+                    )}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseModal} color="primary">Bezárás</Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 };

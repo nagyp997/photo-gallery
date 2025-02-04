@@ -104,7 +104,7 @@ router.post('/:id/comment', auth, async (req, res) => {
         const image = await Image.findById(req.params.id);
         if (!image) return res.status(404).json({ msg: 'A kép nem található' });
 
-        console.log(`💾 Komment mentése az adatbázisba: "${comment}" Felhasználó: ${req.user.id}`);
+        console.log(`Komment mentése az adatbázisba: "${comment}" Felhasználó: ${req.user.id}`);
 
         const newComment = {
             author: req.user.id,
@@ -117,7 +117,7 @@ router.post('/:id/comment', auth, async (req, res) => {
 
         res.json({ msg: 'Komment hozzáadva', comment: newComment });
     } catch (err) {
-        console.error('❌ Hiba a komment mentése során:', err.message);
+        console.error('Hiba a komment mentése során:', err.message);
         res.status(500).json({ error: err.message });
     }
 });
@@ -137,7 +137,7 @@ router.delete('/:imageId/comment/:commentId', auth, async (req, res) => {
 
         // Ellenőrizzük, hogy a bejelentkezett felhasználó törölheti-e
         if (image.comments[commentIndex].author.toString() !== req.user.id) {
-            return res.status(403).json({ msg: '❌ Nincs jogosultságod törölni ezt a kommentet!' });
+            return res.status(403).json({ msg: 'Nincs jogosultságod törölni ezt a kommentet!' });
         }
 
         // Komment törlése a tömbből
@@ -146,7 +146,7 @@ router.delete('/:imageId/comment/:commentId', auth, async (req, res) => {
 
         res.json({ msg: 'Komment törölve', image });
     } catch (err) {
-        console.error('❌ Hiba a komment törlése során:', err.message);
+        console.error('Hiba a komment törlése során:', err.message);
         res.status(500).json({ error: err.message });
     }
 });
