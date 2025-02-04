@@ -17,6 +17,11 @@ const ImageSchema = new mongoose.Schema({
             createdAt: { type: Date, default: Date.now } // A komment létrehozási dátuma
         }
     ],
+    album: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Album', // Kapcsolat az Album modellel
+        default: null // Alapértelmezett érték: nincs albumhoz rendelve
+    },
     createdAt: {
         type: Date,
         default: Date.now

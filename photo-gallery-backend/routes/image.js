@@ -122,7 +122,6 @@ router.post('/:id/comment', auth, async (req, res) => {
     }
 });
 
-
 // Komment törlése
 router.delete('/:imageId/comment/:commentId', auth, async (req, res) => {
     try {
@@ -147,6 +146,37 @@ router.delete('/:imageId/comment/:commentId', auth, async (req, res) => {
         res.json({ msg: 'Komment törölve', image });
     } catch (err) {
         console.error('Hiba a komment törlése során:', err.message);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+//Kép albumhoz rendelése
+router.put('/:id/assignAlbum', auth, async (req, res) => {
+    try {
+        const { albumId } = req.body;
+        const image = await Image.findById(req.params.id);
+
+        if (!image) {
+            return res.status(404).json({ msg: 'A kép nem található' });
+        }
+
+        image.album = albumId || null;
+        await image.save();
+
+        res.json({ msg: 'A kép sikeresen hozzárendelve az albumhoz', image });
+    } catch (err) {
+        console.error('Hiba az album hozzárendelésekor:', err.message);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+//Album képeinek lekérése
+router.get('/album/:albumId', auth, async (req, res) => {
+    try {
+        const images = await Image.find({ album: req.params.albumId });
+        res.json(images);
+    } catch (err) {
+        console.error('Hiba az album képeinek lekérésekor:', err.message);
         res.status(500).json({ error: err.message });
     }
 });

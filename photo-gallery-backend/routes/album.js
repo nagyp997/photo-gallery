@@ -6,9 +6,10 @@ const router = express.Router();
 // Get all albums
 router.get('/', auth, async (req, res) => {
     try {
-        const albums = await Album.find();
+        const albums = await Album.find().populate('author', 'username'); // 🔹 Szerző adatait is betöltjük
         res.json(albums);
     } catch (err) {
+        console.error('Hiba az albumok betöltésekor:', err.message);
         res.status(500).json({ error: err.message });
     }
 });
@@ -22,10 +23,15 @@ router.post('/new', auth, async (req, res) => {
     }
 
     try {
-        const album = new Album({ name });
+        const album = new Album({
+            name,
+            author: req.user.id
+        });
+
         await album.save();
         res.status(201).json(album);
     } catch (err) {
+        console.error('Hiba az album létrehozásakor:', err.message);
         res.status(500).json({ error: err.message });
     }
 });

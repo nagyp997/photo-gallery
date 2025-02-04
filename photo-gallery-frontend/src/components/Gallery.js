@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { fetchImages, uploadImage, updateImage, deleteImage, addComment, deleteComment } from '../api/api';
+import { fetchImages, uploadImage, updateImage, deleteImage, addComment, deleteComment, assignImageToAlbum, fetchAlbums } from '../api/api';
 import {
-    Grid, Card, CardMedia, CardContent, CardActions, Button, TextField, Typography, CircularProgress, Box, Alert, List, ListItem, IconButton, Dialog, DialogContent, DialogActions
+    Grid, Card, CardMedia, CardContent, CardActions, Button, TextField, Typography, CircularProgress, Box, Alert, List, ListItem, IconButton, Dialog, DialogContent, DialogActions, MenuItem, Select
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -15,11 +15,29 @@ const Gallery = () => {
     const [loading, setLoading] = useState(true);
     const [selectedImage, setSelectedImage] = useState(null); // A kiválasztott kép
     const [isModalOpen, setIsModalOpen] = useState(false);    // A modális állapota
-
+    const [albums, setAlbums] = useState([]);
+    const [selectedAlbum, setSelectedAlbum] = useState({});
     const loggedInUserId = localStorage.getItem('userId');
 
     useEffect(() => {
         getImages();
+
+        const getAlbums = async () => {
+            try {
+                const { data } = await fetchAlbums();
+                if (Array.isArray(data)) {
+                    setAlbums(data);
+                } else {
+                    console.error("Nem tömbként érkezett az albumok adata:", data);
+                    setAlbums([]);
+                }
+            } catch (err) {
+                console.error('Hiba az albumok betöltésekor:', err);
+                setAlbums([]);
+            }
+        };
+
+        getAlbums();
     }, []);
 
     const getImages = async () => {
@@ -32,6 +50,24 @@ const Gallery = () => {
             console.error('Hiba történt:', err);
         }
         setLoading(false);
+    };
+
+    const getAlbums = async () => {
+        try {
+            const { data } = await fetchAlbums();
+            setAlbums(data);
+        } catch (err) {
+            console.error('Hiba az albumok betöltésekor:', err);
+        }
+    };
+
+    const handleAssignToAlbum = async (imageId) => {
+        try {
+            await assignImageToAlbum(imageId, selectedAlbum[imageId]);
+            getImages();
+        } catch (err) {
+            console.error('Hiba az album hozzárendelésekor:', err);
+        }
     };
 
     const handleUpload = async () => {
@@ -224,6 +260,28 @@ const Gallery = () => {
                                 >
                                     Küldés
                                 </Button>
+
+                                <Typography variant="subtitle1"
+                                            sx={{
+                                                mt: 2
+                                            }}
+                                >Album:</Typography>
+                                <Select
+                                    value={selectedAlbum[image._id] || image.album || ''} // 🔹 Alapérték: ha van image.album, akkor az album ID-je jelenik meg
+                                    onChange={(e) => setSelectedAlbum({ ...selectedAlbum, [image._id]: e.target.value })}
+                                    displayEmpty
+                                    fullWidth
+                                >
+                                    <MenuItem value="">
+                                        {image.album ? albums.find((album) => album._id === image.album)?.name || "Nincs album" : "Válassz a listából"}
+                                    </MenuItem>
+                                    {albums.map((album) => (
+                                        <MenuItem key={album._id} value={album._id}>
+                                            {album.name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                                <Button size="small" onClick={() => handleAssignToAlbum(image._id)}>Hozzárendelés</Button>
                             </CardContent>
 
                             {/* Kép szerkesztése és törlése */}

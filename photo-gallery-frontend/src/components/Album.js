@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { fetchAlbums, createAlbum, updateAlbum, deleteAlbum } from '../api/api';
-import { Grid, Card, CardContent, CardActions, Button, Typography, TextField, Box } from '@mui/material';
+import { fetchAlbums, fetchImagesByAlbum, createAlbum, updateAlbum, deleteAlbum } from '../api/api';
+import { Grid, Card, CardContent, CardActions, Button, Typography, TextField, Box, CardMedia } from '@mui/material';
 
 const Albums = () => {
     const [albums, setAlbums] = useState([]);
     const [newAlbum, setNewAlbum] = useState('');
     const [editAlbum, setEditAlbum] = useState({ id: null, name: '' });
+    const [selectedImages, setSelectedImages] = useState([]);
 
     useEffect(() => {
         getAlbums();
@@ -51,6 +52,15 @@ const Albums = () => {
         }
     };
 
+    const handleViewImages = async (albumId) => {
+        try {
+            const { data } = await fetchImagesByAlbum(albumId);
+            setSelectedImages(data);
+        } catch (err) {
+            console.error('Hiba az album képeinek betöltésekor:', err);
+        }
+    };
+
     return (
         <Box p={3}>
             <Typography variant="h4" align="center" gutterBottom>Albumok</Typography>
@@ -70,40 +80,58 @@ const Albums = () => {
                 </Button>
             </Box>
 
-            {/* Albumok megjelenítése */}
+            {/* Albumok listázása */}
             <Grid container spacing={3} justifyContent="center">
-                {albums.map((album) => (
-                    <Grid item key={album._id} xs={12} sm={6} md={4} lg={3}>
-                        <Card>
-                            <CardContent>
-                                <Typography variant="h6">{album.name || "Nincs név megadva"}</Typography>
-                            </CardContent>
-                            <CardActions>
-                                {editAlbum.id === album._id ? (
-                                    <Box display="flex" width="100%">
-                                        <TextField
-                                            size="small"
-                                            fullWidth
-                                            value={editAlbum.name}
-                                            onChange={(e) => setEditAlbum({ ...editAlbum, name: e.target.value })}
-                                        />
-                                        <Button onClick={() => handleEdit(album._id)} color="primary">
-                                            Mentés
-                                        </Button>
-                                    </Box>
-                                ) : (
-                                    <Button size="small" onClick={() => setEditAlbum({ id: album._id, name: album.name })}>
-                                        Szerkesztés
+                {albums.length === 0 ? (
+                    <Typography variant="h6" color="textSecondary">Nincsenek albumok</Typography>
+                ) : (
+                    albums.map((album) => (
+                        <Grid item key={album._id} xs={12} sm={6} md={4} lg={3}>
+                            <Card>
+                                <CardContent>
+                                    <Typography variant="h6">{album.name || "Nincs név megadva"}</Typography>
+                                    <Typography variant="body2" color="textSecondary">
+                                        Szerző: {album.author && album.author.username ? album.author.username : "Ismeretlen"}
+                                    </Typography>
+                                    {/*Gomb az albumhoz tartozó képek lekérdezéséhez */}
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={() => handleViewImages(album._id)}
+                                        sx={{ mt: 1 }}
+                                    >
+                                        Képek megtekintése
                                     </Button>
-                                )}
-                                <Button size="small" color="error" onClick={() => handleDelete(album._id)}>
-                                    Törlés
-                                </Button>
-                            </CardActions>
-                        </Card>
-                    </Grid>
-                ))}
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    ))
+                )}
             </Grid>
+
+            {/*Az albumhoz tartozó képek megjelenítése */}
+            {selectedImages.length > 0 && (
+                <Box mt={4}>
+                    <Typography variant="h5">Album képei</Typography>
+                    <Grid container spacing={2}>
+                        {selectedImages.map((image) => (
+                            <Grid item key={image._id} xs={12} sm={6} md={4} lg={3}>
+                                <Card>
+                                    <CardMedia
+                                        component="img"
+                                        height="200"
+                                        image={image.src.startsWith('http') ? image.src : `http://localhost:5000/uploads/${image.src}`}
+                                        alt="Kép"
+                                    />
+                                    <CardContent>
+                                        <Typography variant="subtitle1">Szerző: {image.author.username}</Typography>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Box>
+            )}
         </Box>
     );
 };

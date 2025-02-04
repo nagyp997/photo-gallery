@@ -22,3 +22,5 @@ export const updateAlbum = (id, albumData) => API.put(`/albums/${id}/edit`, albu
 export const deleteAlbum = (id) => API.delete(`/albums/${id}/delete`);
 export const login = (formData) => API.post('/auth/login', formData);
 export const register = (formData) => API.post('/auth/register', formData);
+export const assignImageToAlbum = (imageId, albumId) => API.put(`/images/${imageId}/assignAlbum`, { albumId });
+export const fetchImagesByAlbum = (albumId) => API.get(`/images/album/${albumId}`);
