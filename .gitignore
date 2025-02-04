@@ -10,6 +10,5 @@ photo-gallery-backend/dist/
 *.tmp
 *.swp
 *.DS_Store
-photo-gallery-backend/uploads/
 .git/
 coverage/
