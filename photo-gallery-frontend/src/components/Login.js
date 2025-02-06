@@ -18,7 +18,7 @@ const Login = () => {
             const { data } = await login(formData);
             console.log('Bejelentkezési válasz:', data);
             localStorage.setItem('token', data.token);
-            localStorage.setItem('userId', data.user._id); // Felhasználó ID elmentése
+            localStorage.setItem('userId', data.user._id);
             navigate('/gallery');
         } catch (err) {
             setError('Hibás felhasználónév vagy jelszó!');

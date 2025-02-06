@@ -7,8 +7,8 @@ const Navbar = () => {
     const token = localStorage.getItem('token');
 
     const handleLogout = () => {
-        localStorage.removeItem('token'); // Token törlése
-        navigate('/login'); // Átirányítás a bejelentkezési oldalra
+        localStorage.removeItem('token');
+        navigate('/login');
     };
 
     return (

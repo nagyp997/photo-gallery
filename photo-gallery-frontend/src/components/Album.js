@@ -7,7 +7,7 @@ const Albums = () => {
     const [newAlbum, setNewAlbum] = useState('');
     const [editAlbum, setEditAlbum] = useState({ id: null, name: '' });
     const [selectedImages, setSelectedImages] = useState([]);
-    const loggedInUserId = localStorage.getItem('userId'); // Bejelentkezett felhasználó ID-ja
+    const loggedInUserId = localStorage.getItem('userId');
 
     useEffect(() => {
         getAlbums();
@@ -71,7 +71,6 @@ const Albums = () => {
         <Box p={3}>
             <Typography variant="h4" align="center" gutterBottom>Albumok</Typography>
 
-            {/* Új album létrehozása */}
             <Box display="flex" justifyContent="center" mb={3}>
                 <TextField
                     label="Új album neve"
@@ -86,7 +85,6 @@ const Albums = () => {
                 </Button>
             </Box>
 
-            {/* Albumok listázása */}
             <Grid container spacing={3} justifyContent="center">
                 {albums.length === 0 ? (
                     <Typography variant="h6" color="textSecondary">Nincsenek albumok</Typography>
@@ -108,7 +106,7 @@ const Albums = () => {
                                         Képek megtekintése
                                     </Button>
                                 </CardContent>
-                                {/*Csak a saját album törlésére legyen lehetőség */}
+
                                 {album.author?._id === loggedInUserId && (
                                     <Button size="small" color="error" onClick={() => handleDelete(album._id, album.author._id)}>
                                         Törlés
@@ -120,7 +118,6 @@ const Albums = () => {
                 )}
             </Grid>
 
-            {/* Az albumhoz tartozó képek megjelenítése */}
             {selectedImages.length > 0 && (
                 <Box mt={4}>
                     <Typography variant="h5">Album képei</Typography>

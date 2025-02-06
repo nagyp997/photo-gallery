@@ -12,15 +12,15 @@ const ImageSchema = new mongoose.Schema({
     },
     comments: [
         {
-            author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // A komment szerzője
-            comment: { type: String, required: true }, // A komment szövege
-            createdAt: { type: Date, default: Date.now } // A komment létrehozási dátuma
+            author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+            comment: { type: String, required: true },
+            createdAt: { type: Date, default: Date.now }
         }
     ],
     album: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Album', // Kapcsolat az Album modellel
-        default: null // Alapértelmezett érték: nincs albumhoz rendelve
+        ref: 'Album',
+        default: null
     },
     createdAt: {
         type: Date,

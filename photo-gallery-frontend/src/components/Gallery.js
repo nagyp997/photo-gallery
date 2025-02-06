@@ -13,8 +13,8 @@ const Gallery = () => {
     const [commentText, setCommentText] = useState({});
     const [alertMessage, setAlertMessage] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [selectedImage, setSelectedImage] = useState(null); // A kiválasztott kép
-    const [isModalOpen, setIsModalOpen] = useState(false);    // A modális állapota
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [albums, setAlbums] = useState([]);
     const [selectedAlbum, setSelectedAlbum] = useState({});
     const loggedInUserId = localStorage.getItem('userId');
@@ -115,12 +115,12 @@ const Gallery = () => {
         if (!commentText[imageId]) return;
 
         try {
-            console.log(`💬 Komment küldése képhez (ID: ${imageId}):`, commentText[imageId]); // Log a konzolba
+            console.log(`💬 Komment küldése képhez (ID: ${imageId}):`, commentText[imageId]);
 
             await addComment(imageId, commentText[imageId]);
-            setCommentText({ ...commentText, [imageId]: '' }); // Töröljük az input mezőt
+            setCommentText({ ...commentText, [imageId]: '' });
 
-            getImages(); // Frissítjük a képeket, hogy megjelenjen a komment
+            getImages();
         } catch (err) {
             console.error('Hiba történt a komment küldésekor:', err);
         }
@@ -154,14 +154,12 @@ const Gallery = () => {
         <Box p={3}>
             <Typography variant="h4" align="center" gutterBottom>Galéria</Typography>
 
-            {/* Figyelmeztetések megjelenítése */}
             {alertMessage && (
                 <Alert severity={alertMessage.type} onClose={() => setAlertMessage(null)} sx={{ mb: 2 }}>
                     {alertMessage.text}
                 </Alert>
             )}
 
-            {/* Új kép feltöltése */}
             <Box display="flex" justifyContent="center" mb={3}>
                 <TextField
                     label="Kép URL vagy fájlnév"
@@ -176,13 +174,10 @@ const Gallery = () => {
                 </Button>
             </Box>
 
-            {/* Betöltési animáció */}
             {loading && <Box display="flex" justifyContent="center" mt={3}><CircularProgress /></Box>}
 
-            {/* Hibakezelés */}
             {error && <Typography color="error" align="center">{error}</Typography>}
 
-            {/* Képek megjelenítése rácsos elrendezésben */}
             <Grid container spacing={3} justifyContent="center">
                 {images.map((image) => (
                     <Grid item key={image._id} xs={12} sm={6} md={4} lg={3}>
@@ -198,7 +193,6 @@ const Gallery = () => {
                             <CardContent>
                                 <Typography variant="subtitle1">Szerző: {image.author.username}</Typography>
 
-                                {/* Kommentek megjelenítése */}
                                 <List
                                     sx={{
                                         maxHeight: '150px',
@@ -235,7 +229,6 @@ const Gallery = () => {
                                     )}
                                 </List>
 
-                                {/* Komment beküldése */}
                                 <TextField
                                     size="small"
                                     fullWidth
@@ -243,8 +236,6 @@ const Gallery = () => {
                                     value={commentText[image._id] || ''}
                                     onChange={(e) => setCommentText({ ...commentText, [image._id]: e.target.value })}
                                     variant="outlined"
-                                    size="small"
-                                    fullWidth
                                     sx={{
                                         mb: 1
                                     }}
@@ -267,7 +258,7 @@ const Gallery = () => {
                                             }}
                                 >Album:</Typography>
                                 <Select
-                                    value={selectedAlbum[image._id] || image.album || ''} // 🔹 Alapérték: ha van image.album, akkor az album ID-je jelenik meg
+                                    value={selectedAlbum[image._id] || image.album || ''}
                                     onChange={(e) => setSelectedAlbum({ ...selectedAlbum, [image._id]: e.target.value })}
                                     displayEmpty
                                     fullWidth
@@ -284,7 +275,6 @@ const Gallery = () => {
                                 <Button size="small" onClick={() => handleAssignToAlbum(image._id)}>Hozzárendelés</Button>
                             </CardContent>
 
-                            {/* Kép szerkesztése és törlése */}
                             <CardActions>
                                 {editImage.id === image._id ? (
                                     <Box display="flex" width="100%">

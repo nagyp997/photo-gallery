@@ -52,7 +52,7 @@ const Register = () => {
                         />
                     </Box>
                     {error && <Typography color="error">{error}</Typography>}
-                    {success && <Typography color="success">✅ Sikeres regisztráció! Átirányítás...</Typography>}
+                    {success && <Typography color="success">Sikeres regisztráció! Átirányítás...</Typography>}
                     <Button type="submit" variant="contained" color="primary" fullWidth>
                         Regisztráció
                     </Button>
