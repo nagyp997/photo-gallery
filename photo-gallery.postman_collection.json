@@ -1,0 +1,309 @@
+{
+	"info": {
+		"_postman_id": "70fa3924-0506-4bde-9be9-6a01b5bda9d2",
+		"name": "photo-gallery",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40700424"
+	},
+	"item": [
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"testuser2\",\r\n    \"password\": \"password123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/auth/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"testuser\",\r\n    \"password\": \"password123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Images",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OThmNGQwMDQ3MGJiNTExZDIyZDA3ZSIsImlhdCI6MTczOTA4NTY5NiwiZXhwIjoxNzM5MDg5Mjk2fQ._8Ow93IsGO1oGOFTo-M2Nz6c-7wAMfh2eeAUk_u_1Bo",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/images",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"images"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Images",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OThmNGQwMDQ3MGJiNTExZDIyZDA3ZSIsImlhdCI6MTczOTA4NTcxOCwiZXhwIjoxNzM5MDg5MzE4fQ.22EqRDRE4KcvvL-fMAzSkByKyjM1KHCColdVuG16z44",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"src\": \"https://example.com/image.jpg\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/images/new",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"images",
+						"new"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Images",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OThmNGQwMDQ3MGJiNTExZDIyZDA3ZSIsImlhdCI6MTczOTA4NTcxOCwiZXhwIjoxNzM5MDg5MzE4fQ.22EqRDRE4KcvvL-fMAzSkByKyjM1KHCColdVuG16z44",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"src\": \"https://www.veszpreminfo.hu/public/media/place_record/images/lg/f25395e2c8083e4f149d4753d0cbee4a59910b76.png\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/images/679a67f6f3d2a7c18829d254/edit",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"images",
+						"679a67f6f3d2a7c18829d254",
+						"edit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Images",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OThmNGQwMDQ3MGJiNTExZDIyZDA3ZSIsImlhdCI6MTczOTA4NTcxOCwiZXhwIjoxNzM5MDg5MzE4fQ.22EqRDRE4KcvvL-fMAzSkByKyjM1KHCColdVuG16z44",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/images/67a85f55508bdffa396b1b31/delete",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"images",
+						"67a85f55508bdffa396b1b31",
+						"delete"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Albums",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OThmNGQwMDQ3MGJiNTExZDIyZDA3ZSIsImlhdCI6MTczOTA4NTcxOCwiZXhwIjoxNzM5MDg5MzE4fQ.22EqRDRE4KcvvL-fMAzSkByKyjM1KHCColdVuG16z44",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Kedvenc macskáim 2024\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/albums/new",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"albums",
+						"new"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Comments",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OThmNGQwMDQ3MGJiNTExZDIyZDA3ZSIsImlhdCI6MTczOTA4NTcxOCwiZXhwIjoxNzM5MDg5MzE4fQ.22EqRDRE4KcvvL-fMAzSkByKyjM1KHCColdVuG16z44",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"comment\": \"Nagyon tetszik ez a kép!\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/images/679a6820f3d2a7c18829d266/comment",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"images",
+						"679a6820f3d2a7c18829d266",
+						"comment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Comments",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OThmNGQwMDQ3MGJiNTExZDIyZDA3ZSIsImlhdCI6MTczOTA4NTcxOCwiZXhwIjoxNzM5MDg5MzE4fQ.22EqRDRE4KcvvL-fMAzSkByKyjM1KHCColdVuG16z44",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/images/679a6820f3d2a7c18829d266/comment/67a86189508bdffa396b1c84",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"images",
+						"679a6820f3d2a7c18829d266",
+						"comment",
+						"67a86189508bdffa396b1c84"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -52,7 +52,7 @@ const Albums = () => {
 
         try {
             await deleteAlbum(id);
-            getAlbums(); // Frissítjük az albumok listáját
+            getAlbums();
         } catch (err) {
             console.error('Hiba történt az album törlésekor:', err);
         }
@@ -106,12 +106,6 @@ const Albums = () => {
                                         Képek megtekintése
                                     </Button>
                                 </CardContent>
-
-                                {album.author?._id === loggedInUserId && (
-                                    <Button size="small" color="error" onClick={() => handleDelete(album._id, album.author._id)}>
-                                        Törlés
-                                    </Button>
-                                )}
                             </Card>
                         </Grid>
                     ))

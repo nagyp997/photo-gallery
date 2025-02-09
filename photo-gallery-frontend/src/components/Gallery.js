@@ -52,15 +52,6 @@ const Gallery = () => {
         setLoading(false);
     };
 
-    const getAlbums = async () => {
-        try {
-            const { data } = await fetchAlbums();
-            setAlbums(data);
-        } catch (err) {
-            console.error('Hiba az albumok betöltésekor:', err);
-        }
-    };
-
     const handleAssignToAlbum = async (imageId) => {
         try {
             await assignImageToAlbum(imageId, selectedAlbum[imageId]);
@@ -115,7 +106,7 @@ const Gallery = () => {
         if (!commentText[imageId]) return;
 
         try {
-            console.log(`💬 Komment küldése képhez (ID: ${imageId}):`, commentText[imageId]);
+            console.log(`Komment küldése képhez (ID: ${imageId}):`, commentText[imageId]);
 
             await addComment(imageId, commentText[imageId]);
             setCommentText({ ...commentText, [imageId]: '' });

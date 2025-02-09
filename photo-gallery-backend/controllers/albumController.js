@@ -11,8 +11,8 @@ const getAllAlbums = async (req, res) => {
 
 const createAlbum = async (req, res) => {
     try {
-        const album = await albumService.createAlbum(req.body, req.user);
-        res.status(201).json(album);
+        const newAlbum = await albumService.createAlbum(req.body, req.user);
+        res.status(201).json(newAlbum);
     } catch (err) {
         res.status(err.status || 500).json({ msg: err.message });
     }
@@ -20,8 +20,8 @@ const createAlbum = async (req, res) => {
 
 const updateAlbum = async (req, res) => {
     try {
-        const album = await albumService.updateAlbum(req.params.id, req.body, req.user);
-        res.json(album);
+        const updatedAlbum = await albumService.updateAlbum(req.params.id, req.body, req.user);
+        res.json(updatedAlbum);
     } catch (err) {
         res.status(err.status || 500).json({ msg: err.message });
     }
@@ -29,8 +29,8 @@ const updateAlbum = async (req, res) => {
 
 const deleteAlbum = async (req, res) => {
     try {
-        const response = await albumService.deleteAlbum(req.params.id, req.user);
-        res.json(response);
+        const deletedAlbum = await albumService.deleteAlbum(req.params.id, req.user);
+        res.json(deletedAlbum);
     } catch (err) {
         res.status(err.status || 500).json({ msg: err.message });
     }
